@@ -1,7 +1,7 @@
 package ru.job4j.concurrent;
 
 public class ThreadState {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         Thread first = new Thread(
                 () -> System.out.println(Thread.currentThread().getName())
         );
@@ -10,8 +10,9 @@ public class ThreadState {
                 () -> System.out.println(Thread.currentThread().getName())
         );
         second.start();
-        first.join();
-        second.join();
+        while (first.getState() != Thread.State.TERMINATED && second.getState() != Thread.State.TERMINATED) {
+            System.out.println("first " + first.getState() + ", second " + second.getState());
+        }
         System.out.println("The work of the main thread is completed");
     }
 }
