@@ -23,7 +23,7 @@ public class UserStorage {
     }
 
     public synchronized boolean delete(User user) {
-        return userMap.remove(user.getId()) != null;
+        return userMap.remove(user.getId(), user);
     }
 
     public synchronized boolean transfer(int fromId, int toId, int amount) {
