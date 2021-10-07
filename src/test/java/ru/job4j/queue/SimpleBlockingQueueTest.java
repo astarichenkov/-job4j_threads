@@ -14,19 +14,27 @@ public class SimpleBlockingQueueTest {
     @Test
     public void whenFetchAllThenGetIt() throws InterruptedException {
         final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
-        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(5);
+        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
         Thread producer = new Thread(
                 () -> {
-                    IntStream.range(0, 5).forEach(
-                            queue::offer
-                    );
+                    IntStream.range(0, 5).forEach(e -> {
+                        try {
+                            queue.offer(e);
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+                    });
                 }
         );
         producer.start();
         Thread consumer = new Thread(
                 () -> {
                     while (!queue.isEmpty() || !Thread.currentThread().isInterrupted()) {
-                        buffer.add(queue.poll());
+                        try {
+                            buffer.add(queue.poll());
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
                     }
                 }
         );

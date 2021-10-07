@@ -13,32 +13,25 @@ public class SimpleBlockingQueue<T> {
     private final Queue<T> queue = new LinkedList<>();
     private final int size;
 
-    public SimpleBlockingQueue(int size) {
-        this.size = size;
+    public SimpleBlockingQueue() {
+        this.size = Integer.MAX_VALUE;
     }
 
-    public synchronized void offer(T value) {
+    public synchronized void offer(T value) throws InterruptedException {
         while (queue.size() == size) {
-            try {
                 wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
         queue.offer(value);
         notify();
     }
 
-    public synchronized T poll() {
+    public synchronized T poll() throws InterruptedException {
         while (queue.isEmpty()) {
-            try {
                 wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
+        T element = queue.poll();
         notify();
-        return queue.poll();
+        return element;
     }
 
     public synchronized boolean isEmpty() {
