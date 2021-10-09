@@ -17,6 +17,10 @@ public class SimpleBlockingQueue<T> {
         this.size = Integer.MAX_VALUE;
     }
 
+    public SimpleBlockingQueue(int size) {
+        this.size = size;
+    }
+
     public synchronized void offer(T value) throws InterruptedException {
         while (queue.size() == size) {
                 wait();
