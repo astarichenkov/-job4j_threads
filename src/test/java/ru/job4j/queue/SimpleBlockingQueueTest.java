@@ -44,4 +44,38 @@ public class SimpleBlockingQueueTest {
         consumer.join();
         assertThat(buffer, is(Arrays.asList(0, 1, 2, 3, 4)));
     }
+
+    @Test
+    public void whenThreeOfferAndPoll() throws InterruptedException {
+        final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
+        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
+        Thread producer = new Thread(
+                () -> {
+                    try {
+                        for (int i = 0; i < 5; i++) {
+                            queue.offer(i);
+                        }
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+        );
+        producer.start();
+        Thread consumer = new Thread(
+                () -> {
+                    try {
+                        for (int i = 0; i < 4; i++) {
+                            queue.poll();
+                        }
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+        );
+        consumer.start();
+        producer.join();
+        consumer.interrupt();
+        consumer.join();
+        assertEquals(4, queue.poll().intValue());
+    }
 }
