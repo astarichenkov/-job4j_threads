@@ -11,16 +11,13 @@ public class Cache {
     }
 
     public boolean update(Base model) {
-        Integer id = model.getId();
-        Base stored = memory.get(id);
-        memory.computeIfPresent(id, (key, value) -> {
-            if (model.getVersion() != stored.getVersion()) {
+        Base tempModel = memory.computeIfPresent(model.getId(), (key, value) -> {
+            if (model.getVersion() != value.getVersion()) {
                 throw new OptimisticException("Модель была ранее изменена");
             }
-            model.incrementVersion();
-            return model;
+            return model.incrementVersion();
         });
-        return true;
+        return tempModel != null;
     }
 
     public void delete(Base model) {
