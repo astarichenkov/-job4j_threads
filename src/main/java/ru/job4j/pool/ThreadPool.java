@@ -8,12 +8,13 @@ import java.util.List;
 public class ThreadPool {
     private final List<Thread> threads = new LinkedList<>();
     private final SimpleBlockingQueue<Runnable> tasks = new SimpleBlockingQueue<>();
+    int size = Runtime.getRuntime().availableProcessors();
 
     public ThreadPool() {
-        int size = Runtime.getRuntime().availableProcessors();
         for (int i = 0; i < size; i++) {
-            threads.add(new Thread(new JobWorker()));
-            threads.forEach(Thread::start);
+            Thread thread = new Thread(new JobWorker());
+            threads.add(thread);
+            thread.start();
         }
     }
 
@@ -22,7 +23,10 @@ public class ThreadPool {
     }
 
     public void shutdown() {
-        threads.forEach(Thread::interrupt);
+        for (int i = 0; i < size; i++) {
+            Thread thread = threads.get(i);
+            thread.interrupt();
+        }
     }
 
     private final class JobWorker implements Runnable {
@@ -40,5 +44,16 @@ public class ThreadPool {
                 }
             }
         }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        ThreadPool threadPool = new ThreadPool();
+
+        for (int i = 0; i < 5; i++) {
+            Task task = new Task(i);
+            threadPool.work(task);
+        }
+
+        threadPool.shutdown();
     }
 }
