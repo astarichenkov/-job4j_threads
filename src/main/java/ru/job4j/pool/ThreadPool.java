@@ -30,13 +30,11 @@ public class ThreadPool {
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
-                Runnable nextTask = null;
                 try {
-                    nextTask = tasks.poll();
+                    tasks.poll().run();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                    nextTask.run();
             }
         }
     }
