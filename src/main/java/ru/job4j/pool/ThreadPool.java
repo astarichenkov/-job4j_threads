@@ -36,9 +36,7 @@ public class ThreadPool {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if (nextTask != null) {
                     nextTask.run();
-                }
             }
         }
     }
