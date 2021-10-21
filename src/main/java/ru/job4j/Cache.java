@@ -8,5 +8,6 @@ public final class Cache {
             cache = new Cache();
         }
         return cache;
+
     }
 }
