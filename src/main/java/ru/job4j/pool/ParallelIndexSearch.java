@@ -29,11 +29,11 @@ public class ParallelIndexSearch<T> extends RecursiveTask<Integer> {
         int left = leftSearch.join();
         int right = leftSearch.join();
 
-        return left != -1 ? left : right;
+        return Math.max(left, right);
     }
 
     private int linearSearch() {
-        for (int i = from; i < to - 1; i++) {
+        for (int i = from; i <= to; i++) {
             if (value.equals(array[i])) {
                 return i;
             }
